@@ -44,6 +44,7 @@ func main() {
 	cmds.Register("login", loginHandler)
 	cmds.Register("register", registerHandler)
 	cmds.Register("reset", ResetHandler)
+	cmds.Register("users", UsersHandler)
 
 	if len(os.Args) < 2 {
 		fmt.Print("Not enough arguments provided")
@@ -51,8 +52,6 @@ func main() {
 		return
 	}
 	commandName := os.Args[1]
-
-	fmt.Printf("%v \n", os.Args)
 
 	err = cmds.Run(programState, Command{
 		Name: commandName,
