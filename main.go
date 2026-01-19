@@ -45,6 +45,7 @@ func main() {
 	cmds.Register("register", registerHandler)
 	cmds.Register("reset", ResetHandler)
 	cmds.Register("users", UsersHandler)
+	cmds.Register("agg", AggregatorHandler)
 
 	if len(os.Args) < 2 {
 		fmt.Print("Not enough arguments provided")
