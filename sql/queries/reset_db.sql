@@ -1,2 +1,4 @@
 -- name: ResetDb :exec
-TRUNCATE TABLE users;
+TRUNCATE TABLE users
+RESTART IDENTITY
+CASCADE;

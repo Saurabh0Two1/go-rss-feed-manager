@@ -11,6 +11,8 @@ import (
 
 const resetDb = `-- name: ResetDb :exec
 TRUNCATE TABLE users
+RESTART IDENTITY
+CASCADE
 `
 
 func (q *Queries) ResetDb(ctx context.Context) error {

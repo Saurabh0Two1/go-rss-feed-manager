@@ -46,6 +46,8 @@ func main() {
 	cmds.Register("reset", ResetHandler)
 	cmds.Register("users", UsersHandler)
 	cmds.Register("agg", AggregatorHandler)
+	cmds.Register("addfeed", AddFeedHandler)
+	cmds.Register("feeds", FeedsHandler)
 
 	if len(os.Args) < 2 {
 		fmt.Print("Not enough arguments provided")
@@ -61,5 +63,6 @@ func main() {
 
 	if err != nil {
 		log.Fatal(err)
+		syscall.Exit(1)
 	}
 }
