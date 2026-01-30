@@ -47,6 +47,29 @@ func AddFeedHandler(s *State, cmd Command) error {
 		fmt.Println("error in creating feed")
 	}
 
+	var feedIDNull uuid.NullUUID
+
+	if len(feed.ID) > 0 {
+		feedIDNull = uuid.NullUUID{
+			UUID:  feed.ID,
+			Valid: true,
+		}
+	}
+
+	feedFollowsParams := database.CreateFeedFollowsParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID:    userIDNull,
+		FeedID:    feedIDNull,
+	}
+
+	_, err = s.db.CreateFeedFollows(ctx, feedFollowsParams)
+
+	if err != nil {
+		return fmt.Errorf("failed to create feed follow")
+	}
+
 	fmt.Println(feed)
 
 	return nil

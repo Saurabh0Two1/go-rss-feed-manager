@@ -6,7 +6,7 @@ import (
 	"syscall"
 )
 
-func loginHandler(s *State, cmd Command) error {
+func LoginHandler(s *State, cmd Command) error {
 	if len(cmd.Args) != 2 {
 		err := fmt.Errorf("usage: %s <name>", cmd.Name)
 		fmt.Printf("%v", err)

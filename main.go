@@ -41,13 +41,15 @@ func main() {
 		registeredCommands: make(map[string]func(s *State, command Command) error),
 	}
 
-	cmds.Register("login", loginHandler)
-	cmds.Register("register", registerHandler)
+	cmds.Register("login", LoginHandler)
+	cmds.Register("register", RegisterHandler)
 	cmds.Register("reset", ResetHandler)
 	cmds.Register("users", UsersHandler)
 	cmds.Register("agg", AggregatorHandler)
 	cmds.Register("addfeed", AddFeedHandler)
 	cmds.Register("feeds", FeedsHandler)
+	cmds.Register("follow", FollowHandler)
+	cmds.Register("following", FollowingHandler)
 
 	if len(os.Args) < 2 {
 		fmt.Print("Not enough arguments provided")

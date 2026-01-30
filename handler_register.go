@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 	"gator/m/v2/internal/database"
-	"syscall"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-func registerHandler(s *State, cmd Command) error {
+func RegisterHandler(s *State, cmd Command) error {
 	fmt.Printf("%v", cmd)
 	if len(cmd.Args) != 2 {
 		err := fmt.Errorf("usage: %s <name>", cmd.Name)
@@ -27,8 +26,14 @@ func registerHandler(s *State, cmd Command) error {
 		fmt.Println("error in getting user")
 	}
 
+	fmt.Printf("%v", existingUser)
+
 	if len(existingUser.Name) > 0 {
-		syscall.Exit(1)
+		err = s.cfg.SetUser(existingUser.Name)
+
+		if err != nil {
+			return fmt.Errorf("couldn't set current user: %w \n", err)
+		}
 		return nil
 	}
 
