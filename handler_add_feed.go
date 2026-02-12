@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"gator/m/v2/internal/database"
-	"syscall"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-func AddFeedHandler(s *State, cmd Command) error {
+func AddFeedHandler(s *State, cmd Command, user database.User) error {
+
 	if len(cmd.Args) != 3 {
 		err := fmt.Errorf("usage: %s <name>", cmd.Name)
 		fmt.Printf("%v", err)
@@ -20,21 +20,12 @@ func AddFeedHandler(s *State, cmd Command) error {
 	ctx := context.Background()
 	name := cmd.Args[1]
 	url := cmd.Args[2]
-	currentUser := s.cfg.CurrentUserName
-
-	existingUser, err := s.db.GetUser(ctx, currentUser)
-
-	if err != nil {
-		fmt.Printf("error in getting user:-  %v \n", err)
-		syscall.Exit(1)
-		return nil
-	}
 
 	var userIDNull uuid.NullUUID
 
-	if len(existingUser.ID) > 0 {
+	if len(user.ID) > 0 {
 		userIDNull = uuid.NullUUID{
-			UUID:  existingUser.ID,
+			UUID:  user.ID,
 			Valid: true,
 		}
 	}

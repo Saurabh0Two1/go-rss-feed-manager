@@ -26,8 +26,6 @@ func RegisterHandler(s *State, cmd Command) error {
 		fmt.Println("error in getting user")
 	}
 
-	fmt.Printf("%v", existingUser)
-
 	if len(existingUser.Name) > 0 {
 		err = s.cfg.SetUser(existingUser.Name)
 

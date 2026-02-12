@@ -9,33 +9,26 @@ import (
 	"github.com/google/uuid"
 )
 
-func FollowHandler(s *State, command Command) error {
+func FollowHandler(s *State, command Command, user database.User) error {
 
 	if len(command.Args) < 2 {
 		return fmt.Errorf("usage: %s <FEED_URL>", command.Name)
 	}
 
 	url := command.Args[1]
-	currentUserName := s.cfg.CurrentUserName
 	ctx := context.Background()
 
-	userRecord, err := s.db.GetUser(ctx, currentUserName)
-
-	if err != nil {
-		return fmt.Errorf("failed to get current user %v", err)
-	}
-
 	var userIDNull uuid.NullUUID
-	if len(userRecord.ID) > 0 {
+	if len(user.ID) > 0 {
 		userIDNull = uuid.NullUUID{
-			UUID:  userRecord.ID,
+			UUID:  user.ID,
 			Valid: true,
 		}
 	}
 
 	existingFeed, err := s.db.GetFeedByUrl(ctx, url)
 
-	if err != nil || len(userRecord.ID) == 0 {
+	if err != nil || len(user.ID) == 0 {
 		feedParams := database.CreateFeedParams{
 			ID:        uuid.New(),
 			Url:       url,

@@ -3,31 +3,23 @@ package main
 import (
 	"context"
 	"fmt"
+	"gator/m/v2/internal/database"
 
 	"github.com/google/uuid"
 )
 
-func FollowingHandler(s *State, command Command) error {
+func FollowingHandler(s *State, command Command, user database.User) error {
 
 	if len(command.Args) < 1 {
 		return fmt.Errorf("usage: %s <FEED_URL>", command.Name)
 	}
 
-	currentUserName := s.cfg.CurrentUserName
-
-	fmt.Printf("currentUser: %s", currentUserName)
-
 	ctx := context.Background()
-	userRecord, err := s.db.GetUser(ctx, currentUserName)
-
-	if err != nil {
-		return fmt.Errorf("failed to get user %v", err)
-	}
 
 	var userIDNull uuid.NullUUID
-	if len(userRecord.ID) > 0 {
+	if len(user.ID) > 0 {
 		userIDNull = uuid.NullUUID{
-			UUID:  userRecord.ID,
+			UUID:  user.ID,
 			Valid: true,
 		}
 	}
