@@ -26,8 +26,6 @@ type RSSItem struct {
 	PubDate     string `xml:"pubDate"`
 }
 
-const FEED_URL = "https://www.wagslane.dev/index.xml"
-
 func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	httpCl := http.Client{
 		Timeout: 10 * time.Second,
@@ -68,10 +66,20 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	return &feedData, err
 }
 
-func AggregatorHandler(s *State, command Command) error {
-	ctx := context.Background()
+func scrapeFeeds(ctx context.Context, s *State) error {
+	feed, err := s.db.GetNextFeed(ctx)
 
-	feedData, err := fetchFeed(ctx, FEED_URL)
+	if err != nil {
+		return fmt.Errorf("failed to get next feed %v", err)
+	}
+
+	err = s.db.MarkFeedFetched(ctx, feed.ID)
+
+	if err != nil {
+		return fmt.Errorf("failed to mark feed as fetched %v", err)
+	}
+
+	feedData, err := fetchFeed(ctx, feed.Url)
 	if err != nil {
 		return fmt.Errorf("failed to fetch feeds")
 	}
@@ -85,4 +93,22 @@ func AggregatorHandler(s *State, command Command) error {
 	}
 
 	return nil
+}
+
+func AggregatorHandler(s *State, command Command) error {
+	ctx := context.Background()
+	if len(command.Args) < 2 {
+		return fmt.Errorf("usage: %s time_between_reqs", command.Name)
+	}
+
+	timeBetweenRequests, err := time.ParseDuration(command.Args[1])
+
+	if err != nil {
+		return fmt.Errorf("failed to parse time duration")
+	}
+
+	ticker := time.NewTicker(timeBetweenRequests)
+	for ; ; <-ticker.C {
+		scrapeFeeds(ctx, s)
+	}
 }
