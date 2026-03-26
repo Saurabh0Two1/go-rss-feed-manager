@@ -4,10 +4,13 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"gator/m/v2/internal/database"
 	"html"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type RSSFeed struct {
@@ -85,10 +88,28 @@ func scrapeFeeds(ctx context.Context, s *State) error {
 	}
 
 	for _, item := range feedData.Channel.Item {
-		if item.Title == "Optimize For Simplicity First" {
-			fmt.Print("Optimize for simplicity \n")
-		} else {
-			fmt.Printf("%s \n", item.Title)
+		t, err := time.Parse("Mon, 2 Jan 2006 15:04:05 +0000", item.PubDate)
+
+		if err != nil {
+			fmt.Errorf("parsing eerror %v", err)
+		}
+
+		postParams := database.CreatePostsParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			PublishedAt: t.Local(),
+			Title:       item.Title,
+			Description: item.Description,
+			Url:         item.Link,
+			FeedID:      feed.ID,
+		}
+		post, err := s.db.CreatePosts(ctx, postParams)
+
+		fmt.Printf("%v", post)
+
+		if err != nil {
+			fmt.Errorf("%v", err)
 		}
 	}
 

@@ -29,6 +29,17 @@ type FeedFollow struct {
 	FeedID    uuid.NullUUID
 }
 
+type Post struct {
+	ID          uuid.UUID
+	Url         string
+	Title       string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Description string
+	PublishedAt time.Time
+	FeedID      uuid.UUID
+}
+
 type User struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
